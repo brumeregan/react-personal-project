@@ -5,38 +5,60 @@ import React, { Component } from 'react';
 import Styles from './styles.m.css';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 
+
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import TaskWrapper from 'components/TaskWrapper';
+import Spinner from "../Spinner";
 
 export default class Scheduler extends Component {
     state = {
-        tasks: []
+        tasks: [],
+        isSpinning: false,
+        newTaskMessage: ''
     };
 
     componentDidMount() {
         this._fetchAllTasks();
     }
 
-    _fetchAllTasks = async () => {
-        // TODO try/catch
-        const tasks = await api.fetchTasks();
-        console.log(tasks);
-
+    _setFetchingStatus = (isSpinning) => {
         this.setState({
-            tasks
+            isSpinning
         });
     };
 
+    _fetchAllTasks = async () => {
+
+        try {
+            this._setFetchingStatus(true);
+            const tasks = await api.fetchTasks();
+
+            this.setState({
+                tasks,
+            });
+        } catch ({ message }) {
+            console.log('Error: ', message);
+        } finally {
+            this._setFetchingStatus(false);
+        }
+
+    };
+
     _createTask = async (newTask) => {
-        const response = await api.createTask(newTask);
+        try {
+            this._setFetchingStatus(true);
 
-        const { data: task } = await response.json();
+            const task = await api.createTask(newTask);
 
-        this.setState(({ tasks }) => ({
-            tasks: [task, ...tasks]
-        }));
-
+            this.setState(({ tasks }) => ({
+                tasks: [task, ...tasks],
+            }));
+        } catch ({ message }) {
+            console.log('Error', message);
+        } finally {
+            this._setFetchingStatus(false);
+        }
     };
 
     _removeTask = async (id) => {
@@ -50,8 +72,7 @@ export default class Scheduler extends Component {
     };
 
     _updateTask = async (updatedTask) => {
-        const response = await api.updateTask(updatedTask);
-        const { data: [updatedResponse] } = await response.json();
+        const updatedResponse = await api.updateTask(updatedTask);
 
         this.setState(({ tasks }) => ({
             tasks: tasks.map((item) => {
@@ -62,9 +83,11 @@ export default class Scheduler extends Component {
     };
 
     render () {
+        const { isSpinning } = this.state;
         return (
             <section className = { Styles.scheduler }>
                 <main>
+                    <Spinner isSpinning = { isSpinning }/>
                     <Header />
                     <TaskWrapper
                         { ...this.state }
