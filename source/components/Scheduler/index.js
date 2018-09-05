@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 // Instruments
 import Styles from './styles.m.css';
-import { api, MAIN_URL, TOKEN } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
+import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 
 import Header from 'components/Header';
 import Footer from 'components/Footer';
@@ -20,8 +20,8 @@ export default class Scheduler extends Component {
 
     _fetchAllTasks = async () => {
         // TODO try/catch
-        const response = await api.fetchTasks(MAIN_URL, TOKEN);
-        const { data: tasks } = await response.json();
+        const tasks = await api.fetchTasks();
+        console.log(tasks);
 
         this.setState({
             tasks
@@ -29,7 +29,7 @@ export default class Scheduler extends Component {
     };
 
     _createTask = async (newTask) => {
-        const response = await api.createTask(MAIN_URL, TOKEN, newTask);
+        const response = await api.createTask(newTask);
 
         const { data: task } = await response.json();
 
@@ -40,7 +40,7 @@ export default class Scheduler extends Component {
     };
 
     _removeTask = async (id) => {
-        await api.removeTask(MAIN_URL, TOKEN, id);
+        await api.removeTask(id);
 
         this.setState(({ tasks }) => {
             return {
@@ -50,7 +50,7 @@ export default class Scheduler extends Component {
     };
 
     _updateTask = async (updatedTask) => {
-        const response = await api.updateTask(MAIN_URL, TOKEN, updatedTask);
+        const response = await api.updateTask(updatedTask);
         const { data: [updatedResponse] } = await response.json();
 
         this.setState(({ tasks }) => ({
