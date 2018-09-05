@@ -15,7 +15,8 @@ export default class Scheduler extends Component {
     state = {
         tasks: [],
         isSpinning: false,
-        newTaskMessage: ''
+        newTaskMessage: '',
+        tasksFilter: ''
     };
 
     componentDidMount() {
@@ -45,7 +46,7 @@ export default class Scheduler extends Component {
 
     };
 
-    _createTask = async (newTask) => {
+    _createTaskAsync = async (newTask) => {
         try {
             this._setFetchingStatus(true);
 
@@ -61,7 +62,35 @@ export default class Scheduler extends Component {
         }
     };
 
-    _removeTask = async (id) => {
+    _updateTasksFilter = (e) => {
+        const { value } = e.target;
+
+        this.setState({
+            tasksFilter: value.toUpperCase(),
+        });
+
+        this._searchTask();
+    };
+
+    _searchTask = () => {
+        const { tasks, tasksFilter } = this.state;
+
+        if(tasksFilter) {
+            const searchFilter = tasks.filter((item) => item.message.toUpperCase().includes(tasksFilter));
+
+            return searchFilter;
+        }
+
+        return null;
+    };
+
+    _completeAllTasks = () => {
+        // ???
+        this.state.tasks.every((item) => item.completed);
+    };
+
+    _removeTaskAsync = async (id) => {
+        // TODO: try catch
         await api.removeTask(id);
 
         this.setState(({ tasks }) => {
@@ -71,7 +100,7 @@ export default class Scheduler extends Component {
         });
     };
 
-    _updateTask = async (updatedTask) => {
+    _updateTaskAsync = async (updatedTask) => {
         const updatedResponse = await api.updateTask(updatedTask);
 
         this.setState(({ tasks }) => ({
@@ -79,21 +108,30 @@ export default class Scheduler extends Component {
                 return item.id === updatedResponse.id ? updatedResponse : item;
             }),
         }));
+    };
+
+
+    _updateNewTaskMessage = () => {
 
     };
 
+
+
     render () {
-        const { isSpinning } = this.state;
+        const { tasks, isSpinning, tasksFilter } = this.state;
+
+        const tasksToShow = this._searchTask() ? this._searchTask() : tasks;
         return (
             <section className = { Styles.scheduler }>
                 <main>
                     <Spinner isSpinning = { isSpinning }/>
-                    <Header />
+                    <Header taskFilter = { tasksFilter }
+                            _updateTasksFilter = { this._updateTasksFilter }/>
                     <TaskWrapper
-                        { ...this.state }
-                        _createTask = { this._createTask }
-                        _removeTask = { this._removeTask }
-                        _updateTask = { this._updateTask }
+                        tasks = { tasksToShow }
+                        _createTaskAsync = { this._createTaskAsync }
+                        _removeTaskAsync = { this._removeTaskAsync }
+                        _updateTaskAsync = { this._updateTaskAsync }
                     />
                     <Footer />
                 </main>

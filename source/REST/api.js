@@ -29,7 +29,7 @@ export const api = {
                 "Content-type": "application/json",
                 Authorization: TOKEN,
             },
-            body: JSON.stringify({ body }),
+            body: JSON.stringify(body)
         });
 
         if (response.status !== 200) {

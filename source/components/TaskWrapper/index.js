@@ -4,10 +4,7 @@ import Task from 'components/Task';
 
 export default class TaskWrapper extends Component {
     render () {
-
-        const { tasks, _createTask, _removeTask, _updateTask } = this.props;
-
-        console.log('tasksss', tasks);
+        const { tasks, _createTaskAsync, _removeTaskAsync, _updateTaskAsync } = this.props;
 
         const TasksJSX = tasks.map((task) => {
             return (
@@ -17,15 +14,15 @@ export default class TaskWrapper extends Component {
                     message = { task.message }
                     completed = { task.completed }
                     favorite = { task.favorite }
-                    _removeTask = { _removeTask }
-                    _updateTask = { _updateTask }
+                    _removeTaskAsync = { _removeTaskAsync }
+                    _updateTaskAsync = { _updateTaskAsync }
                 />
             );
         });
 
         return (
             <div>
-                <TaskCreation _createTask = { _createTask } />
+                <TaskCreation _createTask = { _createTaskAsync } />
                 <ul>
                     { TasksJSX }
                 </ul>
