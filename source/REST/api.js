@@ -22,14 +22,14 @@ export const api = {
         return tasks;
 
     },
-    async createTask(body) {
+    async createTask(message) {
         const response = await fetch(`${MAIN_URL}`, {
             method:  'POST',
             headers: {
                 "Content-type": "application/json",
                 Authorization: TOKEN,
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify({ message })
         });
 
         if (response.status !== 200) {
