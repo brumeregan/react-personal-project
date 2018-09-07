@@ -189,7 +189,7 @@ export default class Scheduler extends Component {
         const searchedTask = this._searchForTask();
         const myTasks = searchedTask !== null ? searchedTask : tasks;
 
-        const tasksList = myTasks.map((task) => (
+        const tasksJSX = myTasks.map((task) => (
             <Task
                 key = { task.id }
                 { ...task }
@@ -225,7 +225,7 @@ export default class Scheduler extends Component {
                         </form>
                         <div className = { Styles.overlay }>
                             <ul>
-                                <FlipMove duration = { 400 }>{tasksList}</FlipMove>
+                                <FlipMove duration = { 400 }>{ tasksJSX }</FlipMove>
                             </ul>
                         </div>
                     </section>
