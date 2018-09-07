@@ -1,25 +1,24 @@
 // Core
-import React, { Component } from 'react';
-import FlipMove from 'react-flip-move';
+import React, { Component } from "react";
+import FlipMove from "react-flip-move";
 
 // Instrument
-import { api } from '../../REST';
-import { sortTasksByGroup } from '../../instruments';
+import { api } from "../../REST";
+import { sortTasksByGroup } from "../../instruments";
 
-import Styles from './styles.m.css';
-import Checkbox from '../../theme/assets/Checkbox';
+import Styles from "./styles.m.css";
+import Checkbox from "../../theme/assets/Checkbox";
 
 // Components
-import Spinner from '../../components/Spinner/index';
-import Task from '../../components/Task/index';
+import Spinner from "../../components/Spinner/index";
+import Task from "../../components/Task/index";
 
 export default class Scheduler extends Component {
-
     state = {
         tasks:           [],
         isTasksFetching: false,
-        newTaskMessage:  '',
-        tasksFilter:     '',
+        newTaskMessage:  "",
+        tasksFilter:     "",
     };
 
     componentDidMount () {
@@ -35,9 +34,8 @@ export default class Scheduler extends Component {
             this.setState({
                 tasks: sortTasksByGroup(tasks),
             });
-
         } catch ({ message }) {
-            console.log('Error _fetchTasksAsync:', message);
+            console.log("Error _fetchTasksAsync:", message);
         } finally {
             this._setTasksFetchingState(false);
         }
@@ -55,12 +53,11 @@ export default class Scheduler extends Component {
                 const task = await api.createTask(newTaskMessage);
 
                 this.setState((prevState) => ({
-                    tasks: sortTasksByGroup([task, ...prevState.tasks]),
-                    newTaskMessage: '',
+                    tasks:          sortTasksByGroup([task, ...prevState.tasks]),
+                    newTaskMessage: "",
                 }));
-
             } catch ({ message }) {
-                console.log('Error _createTaskAsync: ', message);
+                console.log("Error _createTaskAsync: ", message);
             } finally {
                 this._setTasksFetchingState(false);
             }
@@ -76,11 +73,10 @@ export default class Scheduler extends Component {
             await api.removeTask(id);
 
             this.setState(({ tasks }) => ({
-                tasks: tasks.filter((task) => (task.id !== id)),
+                tasks: tasks.filter((task) => task.id !== id),
             }));
-
         } catch ({ message }) {
-            console.error('Error _removeTaskAsync: ', message);
+            console.error("Error _removeTaskAsync: ", message);
         } finally {
             this._setTasksFetchingState(false);
         }
@@ -105,9 +101,8 @@ export default class Scheduler extends Component {
             this.setState({
                 tasks: sortedTasks,
             });
-
         } catch ({ message }) {
-            console.log('Error _updateTaskAsync', message);
+            console.log("Error _updateTaskAsync", message);
         } finally {
             this._setTasksFetchingState(false);
         }
@@ -122,11 +117,13 @@ export default class Scheduler extends Component {
             this._setTasksFetchingState(true);
 
             try {
-                await api.completeAllTasks(incompleteTasks.map((task) => {
-                    task.completed = true;
+                await api.completeAllTasks(
+                    incompleteTasks.map((task) => {
+                        task.completed = true;
 
-                    return task;
-                }));
+                        return task;
+                    })
+                );
 
                 this.setState(({ tasks }) => ({
                     tasks: tasks.map((task) => {
@@ -135,9 +132,8 @@ export default class Scheduler extends Component {
                         return task;
                     }),
                 }));
-
             } catch ({ message }) {
-                console.log('Error _completeAllTasksAsync', message);
+                console.log("Error _completeAllTasksAsync", message);
             } finally {
                 this._setTasksFetchingState(false);
             }
@@ -145,7 +141,6 @@ export default class Scheduler extends Component {
             return null;
         }
     };
-
 
     _updateTasksFilter = (e) => {
         const { value } = e.target;
@@ -155,10 +150,12 @@ export default class Scheduler extends Component {
     };
 
     _searchForTask = () => {
-        const { tasks, tasksFilter} = this.state;
+        const { tasks, tasksFilter } = this.state;
 
         if (tasksFilter) {
-            return tasks.filter((task) => task.message.toLocaleLowerCase().includes(tasksFilter));
+            return tasks.filter((task) =>
+                task.message.toLocaleLowerCase().includes(tasksFilter)
+            );
         }
 
         return null;
@@ -181,7 +178,12 @@ export default class Scheduler extends Component {
     };
 
     render () {
-        const { tasks, isTasksFetching, newTaskMessage, tasksFilter } = this.state;
+        const {
+            tasks,
+            isTasksFetching,
+            newTaskMessage,
+            tasksFilter,
+        } = this.state;
 
         const checkBox = tasks.length ? this._getAllCompleted() : false;
         const searchedTask = this._searchForTask();
@@ -197,7 +199,7 @@ export default class Scheduler extends Component {
         ));
 
         return (
-            <section className = { Styles.scheduler } >
+            <section className = { Styles.scheduler }>
                 <Spinner isSpinning = { isTasksFetching } />
                 <main>
                     <header>
@@ -210,8 +212,7 @@ export default class Scheduler extends Component {
                         />
                     </header>
                     <section>
-                        <form
-                            onSubmit = { this._createTaskAsync } >
+                        <form onSubmit = { this._createTaskAsync }>
                             <input
                                 className = { Styles.createTask }
                                 maxLength = { 50 }
@@ -220,16 +221,11 @@ export default class Scheduler extends Component {
                                 value = { newTaskMessage }
                                 onChange = { this._updateNewTaskMessage }
                             />
-                            <button>
-                                Добавить задачу
-                            </button>
+                            <button>Добавить задачу</button>
                         </form>
                         <div className = { Styles.overlay }>
                             <ul>
-                                <FlipMove
-                                    duration={400}>
-                                    { tasksList }
-                                </FlipMove>
+                                <FlipMove duration = { 400 }>{tasksList}</FlipMove>
                             </ul>
                         </div>
                     </section>
@@ -242,7 +238,7 @@ export default class Scheduler extends Component {
                             width = { 25 }
                             onClick = { this._completeAllTasksAsync }
                         />
-                        <span className={ Styles.completeAllTasks }>
+                        <span className = { Styles.completeAllTasks }>
                             Все задачи выполнены
                         </span>
                     </footer>

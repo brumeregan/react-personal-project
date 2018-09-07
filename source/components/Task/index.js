@@ -1,39 +1,38 @@
 // Core
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import PropTypes from "prop-types";
+import React, { Component } from "react";
+import classNames from "classnames";
+import { bool, string, func } from "prop-types";
 
 // Instruments
-import Styles from './styles.m.css';
+import Styles from "./styles.m.css";
 
 // Components
-import Checkbox from '../../theme/assets/Checkbox';
-import Edit from '../../theme/assets/Edit';
-import Remove from '../../theme/assets/Remove';
-import Star from '../../theme/assets/Star';
+import Checkbox from "../../theme/assets/Checkbox";
+import Edit from "../../theme/assets/Edit";
+import Remove from "../../theme/assets/Remove";
+import Star from "../../theme/assets/Star";
 
 export default class Task extends Component {
-
     static propTypes = {
-        id: PropTypes.string,
-        completed: PropTypes.bool,
-        favorite: PropTypes.bool,
-        message: PropTypes.string,
-        _removeTaskAsync: PropTypes.func.isRequired,
-        _updateTaskAsync: PropTypes.func.isRequired,
+        _removeTaskAsync: func.isRequired,
+        _updateTaskAsync: func.isRequired,
+        completed:        bool,
+        favorite:         bool,
+        id:               string,
+        message:          string,
     };
 
     state = {
         isTaskEditing: false,
-        newMessage: this.props.message,
+        newMessage:    this.props.message,
     };
 
     _getTaskShape = ({
-                         id = this.props.id,
-                         completed = this.props.completed,
-                         favorite = this.props.favorite,
-                         message = this.props.message,
-                     }) => ({
+        id = this.props.id,
+        completed = this.props.completed,
+        favorite = this.props.favorite,
+        message = this.props.message,
+    }) => ({
         id,
         completed,
         favorite,
@@ -56,7 +55,7 @@ export default class Task extends Component {
         }
 
         this.setState({
-            isTaskEditing
+            isTaskEditing,
         });
     };
 
@@ -74,7 +73,6 @@ export default class Task extends Component {
         this._setTaskEditingState(false);
 
         return null;
-
     };
 
     _updateNewTaskMessage = (e) => {
@@ -144,15 +142,15 @@ export default class Task extends Component {
     };
 
     render () {
-
         const { isTaskEditing, newMessage } = this.state;
         const { completed, favorite } = this.props;
 
         return (
-            <li className = { classNames(Styles.task, {
-                [Styles.completed]: completed,
-            })}>
-                <div className={ Styles.content }>
+            <li
+                className = { classNames(Styles.task, {
+                    [Styles.completed]: completed,
+                }) }>
+                <div className = { Styles.content }>
                     <Checkbox
                         inlineBlock
                         checked = { completed }
@@ -173,7 +171,7 @@ export default class Task extends Component {
                         onKeyDown = { this._updateTaskMessageOnKeyDown }
                     />
                 </div>
-                <div className={ Styles.actions }>
+                <div className = { Styles.actions }>
                     <Star
                         inlineBlock
                         checked = { favorite }

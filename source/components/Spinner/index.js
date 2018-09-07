@@ -1,10 +1,15 @@
 // Core
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { bool } from "prop-types";
 
 // Instruments
-import Styles from './styles.m.css';
+import Styles from "./styles.m.css";
 
 export default class Spinner extends Component {
+    static propTypes = {
+        isSpinning: bool,
+    };
+
     render () {
         const { isSpinning } = this.props;
 
